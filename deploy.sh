@@ -6,12 +6,7 @@ export KUBE_SERVER=${KUBE_SERVER}
 export KUBE_TOKEN=${KUBE_TOKEN}
 export VERSION=${VERSION}
 
-export KUBE_CERTIFICATE_AUTHORITY=/tmp/acp.crt
-if ! curl --silent --fail --retry 5 \
-	https://raw.githubusercontent.com/UKHomeOffice/acp-ca/master/$CLUSTER_NAME.crt -o $KUBE_CERTIFICATE_AUTHORITY; then
-	echo "failed to download ca for kube api"
-	exit 1
-fi
+export KUBE_CERTIFICATE_AUTHORITY="https://raw.githubusercontent.com/UKHomeOffice/acp-ca/master/${CLUSTER_NAME}.crt"
 
 if [[ ${KUBE_NAMESPACE} == *prod ]]
 then
