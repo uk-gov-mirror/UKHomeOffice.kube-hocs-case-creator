@@ -10,12 +10,10 @@ if [[ ${KUBE_NAMESPACE} == *prod ]]
 then
     export MIN_REPLICAS="2"
     export MAX_REPLICAS="6"
-
     export CLUSTER_NAME="acp-prod"
 else
     export MIN_REPLICAS="1"
     export MAX_REPLICAS="3"
-
     export CLUSTER_NAME="acp-notprod"
 fi
 
