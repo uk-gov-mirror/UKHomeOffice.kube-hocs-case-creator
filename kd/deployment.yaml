@@ -264,26 +264,20 @@ spec:
           ports:
             - name: http
               containerPort: 8080
-          livenessProbe:
-            httpGet:
-              path: /actuator/health
-              port: http
-              httpHeaders:
-                - name: X-probe
-                  value: kubelet
-            initialDelaySeconds: 60
-            periodSeconds: 20
-            timeoutSeconds: 10
           readinessProbe:
-            httpGet:
-              path: /actuator/health
-              port: http
-              httpHeaders:
-                - name: X-probe
-                  value: kubelet
-            initialDelaySeconds: 60
-            periodSeconds: 20
-            timeoutSeconds: 10
+            exec:
+              command:
+                - cat
+                - /app/scripts/run.sh
+            initialDelaySeconds: 30
+            periodSeconds: 10
+          livenessProbe:
+            exec:
+              command:
+                - cat
+                - /app/scripts/run.sh
+            initialDelaySeconds: 10
+            periodSeconds: 5
           volumeMounts:
             - mountPath: /etc/keystore
               name: keystore
