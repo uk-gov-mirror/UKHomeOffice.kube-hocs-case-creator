@@ -17,7 +17,77 @@ spec:
         role: hocs-backend
         version: {{.VERSION}}
     spec:
+      imagePullSecrets:
+        - name: registry-credentials
+      initContainers:
+        - name: truststore
+          image: quay.io/ukhomeofficedigital/cfssl-sidekick-jks:v0.0.6
+          securityContext:
+            runAsNonRoot: true
+            capabilities:
+              drop:
+                - SETUID
+                - SETGID
+          args:
+            - --certs=/certs
+            - --command=/usr/bin/create-keystore.sh /certs/tls.pem /certs/tls-key.pem /etc/ssl/certs/acp-root.crt
+            - --domain=hocs-case-creator.${KUBE_NAMESPACE}.svc.cluster.local
+            - --domain=localhost
+            - --onetime=true
+          env:
+            - name: KUBE_NAMESPACE
+              valueFrom:
+                fieldRef:
+                  fieldPath: metadata.namespace
+          volumeMounts:
+            - name: certs
+              mountPath: /certs
+            - name: keystore
+              mountPath: /etc/keystore
+            - name: bundle
+              mountPath: /etc/ssl/certs
+              readOnly: true
+          resources:
+            limits:
+              memory: 64Mi
+              cpu: 900m
+            requests:
+              memory: 16Mi
+              cpu: 300m
+
       containers:
+        - name: certs
+          image: quay.io/ukhomeofficedigital/cfssl-sidekick:v0.0.6
+          securityContext:
+            runAsNonRoot: true
+            capabilities:
+              drop:
+                - SETUID
+                - SETGID
+          args:
+            - --certs=/certs
+            - --domain=hocs-case-creator.${KUBE_NAMESPACE}.svc.cluster.local
+            - --expiry=8760h
+            - --command=/usr/local/scripts/trigger_nginx_reload.sh
+          env:
+            - name: KUBE_NAMESPACE
+              valueFrom:
+                fieldRef:
+                  fieldPath: metadata.namespace
+          volumeMounts:
+            - name: certs
+              mountPath: /certs
+            - name: bundle
+              mountPath: /etc/ssl/certs
+              readOnly: true
+          resources:
+            limits:
+              memory: 32Mi
+              cpu: 400m
+            requests:
+              memory: 8Mi
+              cpu: 100m
+
         - name: hocs-case-creator
           image: quay.io/ukhomeofficedigital/hocs-case-creator:{{.VERSION}}
           imagePullPolicy: Always
@@ -138,3 +208,23 @@ spec:
                 - /app/scripts/run.sh
             initialDelaySeconds: 10
             periodSeconds: 5
+          volumeMounts:
+            - mountPath: /etc/keystore
+              name: keystore
+              readOnly: true
+      volumes:
+        - name: keystore
+          emptyDir:
+            medium: "Memory"
+        - name: certs
+          emptyDir:
+            medium: "Memory"
+        - name: bundle
+          configMap:
+            name: bundle
+        - name: secrets
+          emptyDir:
+            medium: "Memory"
+        - name: auth-secrets
+          secret:
+            secretName: ui-casework-creds
