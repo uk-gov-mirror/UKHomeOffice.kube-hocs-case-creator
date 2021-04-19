@@ -6,15 +6,10 @@ metadata:
   labels:
     version: {{.VERSION}}
 spec:
-  replicas: {{.MIN_REPLICAS}}
+  replicas: 1
   selector:
     matchLabels:
       name: hocs-case-creator
-  strategy:
-    rollingUpdate:
-      maxUnavailable: 0
-      maxSurge: 2
-    type: RollingUpdate
   template:
     metadata:
       labels:
