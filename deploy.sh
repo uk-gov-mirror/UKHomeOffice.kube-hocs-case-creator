@@ -5,6 +5,7 @@ export KUBE_NAMESPACE=${ENVIRONMENT}
 export KUBE_SERVER=${KUBE_SERVER}
 export KUBE_TOKEN=${KUBE_TOKEN}
 export VERSION=${VERSION}
+export HEALTH_FILE_NAME="/app/healthy"
 
 if [[ ${KUBE_NAMESPACE} == *prod ]]
 then
