@@ -7,6 +7,8 @@ metadata:
     version: {{.VERSION}}
 spec:
   replicas: 1
+  strategy:
+    type: Recreate
   selector:
     matchLabels:
       name: hocs-case-creator
