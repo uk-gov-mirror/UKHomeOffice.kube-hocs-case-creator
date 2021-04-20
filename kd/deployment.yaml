@@ -115,8 +115,8 @@ spec:
               value: 'sqs, sns, s3'
             - name: CASE_CREATOR_CASE_SERVICE
               value: 'https://hocs-casework.{{.KUBE_NAMESPACE}}.svc.cluster.local'
-            - name: CASE_CREATOR_CASE_SERVICE
-              value: 'https://hocs-casework.{{.KUBE_NAMESPACE}}.svc.cluster.local'
+            - name: CASE_CREATOR_WORKFLOW_SERVICE
+              value: 'https://hocs-workflow.{{.KUBE_NAMESPACE}}.svc.cluster.local'
             - name: CASE_CREATOR_HEALTH_FILE
               value: {{.HEALTH_FILE_NAME}}
             - name: CASE_CREATOR_BASICAUTH
