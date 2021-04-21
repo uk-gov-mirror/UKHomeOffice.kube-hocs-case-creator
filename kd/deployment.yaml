@@ -117,8 +117,8 @@ spec:
               value: 'https://hocs-casework.{{.KUBE_NAMESPACE}}.svc.cluster.local'
             - name: CASE_CREATOR_WORKFLOW_SERVICE
               value: 'https://hocs-workflow.{{.KUBE_NAMESPACE}}.svc.cluster.local'
-            - name: CASE_CREATOR_HEALTH_FILE
-              value: {{.HEALTH_FILE_NAME}}
+            - name: CASE_CREATOR_SHUTDOWN_DELAY_SECONDS
+              value: '20'
             - name: CASE_CREATOR_BASICAUTH
               valueFrom:
                 secretKeyRef:
@@ -198,27 +198,6 @@ spec:
             requests:
               cpu: 400m
               memory: 768Mi
-          startupProbe:
-            exec:
-              command:
-                - cat
-                - {{.HEALTH_FILE_NAME}}
-            initialDelaySeconds: 30
-            periodSeconds: 10
-          readinessProbe:
-            exec:
-              command:
-                - cat
-                - {{.HEALTH_FILE_NAME}}
-            initialDelaySeconds: 10
-            periodSeconds: 5
-          livenessProbe:
-            exec:
-              command:
-                - cat
-                - {{.HEALTH_FILE_NAME}}
-            initialDelaySeconds: 10
-            periodSeconds: 5
           volumeMounts:
             - mountPath: /etc/keystore
               name: keystore
